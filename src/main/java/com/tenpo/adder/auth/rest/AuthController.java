@@ -6,6 +6,7 @@ import com.tenpo.adder.auth.rest.dto.RegisterDTO;
 import com.tenpo.adder.history.service.HistoryService;
 import com.tenpo.adder.user.model.User;
 import com.tenpo.adder.user.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,8 +16,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static com.tenpo.adder.utils.ApiTenpoConstants.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -36,6 +40,7 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsernameOrEmail(), loginDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        log.info("Logging user: {}", loginDTO.getUsernameOrEmail());
         final AuthResponse authResponse = new AuthResponse(USER_LOGGED_IN);
 
         this.historyService.createHistory(LOGIN_USER_URI,  authResponse.toString());
@@ -45,6 +50,7 @@ public class AuthController {
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/logout")
     public ResponseEntity<AuthResponse> logoutUser() {
+        log.info("Logging out user");
         SecurityContextHolder.getContext().setAuthentication(null);
         final AuthResponse authResponse = new AuthResponse(USER_LOGGED_OFF);
         this.historyService.createHistory(LOGOUT_USER_URI, authResponse.toString());
@@ -53,7 +59,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> registerUser(@RequestBody RegisterDTO registerDTO){
+    public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody RegisterDTO registerDTO){
 
         if(userService.isValidUsername(registerDTO.getUsername())) {
             return this.saveHistory(USERNAME_ALREADY_REGISTERED);
@@ -61,6 +67,7 @@ public class AuthController {
         if(userService.isValidEmail(registerDTO.getEmail())) {
             return this.saveHistory(EMAIL_ALREADY_REGISTERED);
         }
+        log.info("Logging user with username: {} and email: {}", registerDTO.getUsername(), registerDTO.getEmail());
 
         User user = userService.registerUser(registerDTO);
         final AuthResponse authResponse = new AuthResponse(USER_REGISTERED,"/api/users/" + user.getId());

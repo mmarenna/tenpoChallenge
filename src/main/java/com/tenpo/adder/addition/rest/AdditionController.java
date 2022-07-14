@@ -1,5 +1,6 @@
 package com.tenpo.adder.addition.rest;
 
+import com.tenpo.adder.addition.rest.dto.AdditionRequest;
 import com.tenpo.adder.addition.rest.dto.AdditionResponse;
 import com.tenpo.adder.addition.service.AdditionService;
 import com.tenpo.adder.history.service.HistoryService;
@@ -7,10 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 import static com.tenpo.adder.utils.ApiTenpoConstants.ADDITION_URI;
 
@@ -28,15 +31,15 @@ public class AdditionController {
     }
 
     @PreAuthorize("hasRole('USER')")
-    @GetMapping()
-    public ResponseEntity<AdditionResponse> calculateAddition(@RequestParam(value = "inputA") Long inputA,
-                                                              @RequestParam(value = "inputB") Long inputB) {
-        log.info("Calculation addition for: {} and {}", inputA, inputB);
+    @PostMapping()
+    public ResponseEntity<AdditionResponse> calculateAddition(@Valid @RequestBody AdditionRequest additionRequest) {
+        log.info("Calculation addition for: {} and {}", additionRequest.getInputA(), additionRequest.getInputB());
 
-        Long result = additionService.calculateAddition(inputA, inputB);
+        final AdditionResponse additionResponse = AdditionResponse.builder()
+                .result(this.additionService.calculateAddition(additionRequest.getInputA(), additionRequest.getInputB())).build();
 
-        this.historyService.createHistory(ADDITION_URI, String.valueOf(result));
+        this.historyService.createHistory(ADDITION_URI, additionResponse.toString());
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new AdditionResponse(result));
+                .body(additionResponse);
     }
 }

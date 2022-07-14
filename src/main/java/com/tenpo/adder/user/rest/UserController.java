@@ -25,13 +25,17 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<UserResponse> getUsers() {
-        final UserResponse userResponse = new UserResponse(Collections.unmodifiableList(userService.findAll()));
+        final UserResponse userResponse = UserResponse.builder()
+                            .users(Collections.unmodifiableList(userService.findAll()))
+                            .build();
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
     @GetMapping("/{userId}")
     ResponseEntity<UserResponse> getUser(@PathVariable Long userId) {
-        final UserResponse userResponse = new UserResponse(userService.findUserById(userId));
+        final UserResponse userResponse = UserResponse.builder()
+                .user(userService.findUserById(userId))
+                .build();
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 

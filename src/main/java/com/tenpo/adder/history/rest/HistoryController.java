@@ -1,8 +1,8 @@
 package com.tenpo.adder.history.rest;
 
 
-import com.tenpo.adder.history.service.HistoryService;
 import com.tenpo.adder.history.rest.dto.HistoriesResponse;
+import com.tenpo.adder.history.service.HistoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +31,4 @@ public class HistoryController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(this.historyService.getAllHistories(pageNumber, pageSize));
     }
-
 }

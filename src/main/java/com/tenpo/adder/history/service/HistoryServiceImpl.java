@@ -3,7 +3,6 @@ package com.tenpo.adder.history.service;
 import com.tenpo.adder.history.model.History;
 import com.tenpo.adder.history.repository.HistoryRepository;
 import com.tenpo.adder.history.rest.dto.HistoriesResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-@Slf4j
 public class HistoryServiceImpl implements HistoryService{
 
     private final HistoryRepository historyRepository;
@@ -24,14 +22,16 @@ public class HistoryServiceImpl implements HistoryService{
 
     @Override
     public void createHistory(String uri, String response) {
-        History history = new History(uri);
-        history.setResponse(Objects.nonNull(response) ? response : null);
+        History history = History.builder()
+                .uri(uri)
+                .response(Objects.nonNull(response) ? response : null)
+                .build();
         this.historyRepository.save(history);
     }
 
     @Override
     public void createHistory(String uri) {
-        this.historyRepository.save(new History(uri));
+        this.historyRepository.save(History.builder().uri(uri).build());
     }
 
     @Override
@@ -39,13 +39,13 @@ public class HistoryServiceImpl implements HistoryService{
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         Page<History> historiesFromPage = historyRepository.findAll(pageable);
-        List<History> histories = historiesFromPage.getContent();
-        HistoriesResponse historiesResponse = new HistoriesResponse(histories,
-                historiesFromPage.getNumber(),
-                historiesFromPage.getSize(),
-                historiesFromPage.getTotalElements(),
-                historiesFromPage.getTotalPages());
-        return historiesResponse;
+        final List<History> histories = historiesFromPage.getContent();
+
+        return HistoriesResponse.builder()
+                .histories(histories).pageNumber(historiesFromPage.getNumber())
+                .pageSize(historiesFromPage.getSize()).numberOfHistories(historiesFromPage.getTotalElements())
+                .totalPages(historiesFromPage.getTotalPages())
+                .build();
     }
 
 }
