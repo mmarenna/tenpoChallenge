@@ -1,13 +1,13 @@
 package com.tenpo.adder.auth.rest.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 
-@Getter
-@Setter
-public class RegisterDTO {
+@Data
+@Builder
+public class RegisterRequest {
 
     @NotEmpty(message = "Should not be null")
     private String username;

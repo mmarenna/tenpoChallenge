@@ -5,7 +5,6 @@ import com.tenpo.adder.history.repository.HistoryRepository;
 import com.tenpo.adder.history.rest.dto.HistoriesResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,9 +35,8 @@ public class HistoryServiceImpl implements HistoryService{
 
     @Override
     public HistoriesResponse getAllHistories(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
-        Page<History> historiesFromPage = historyRepository.findAll(pageable);
+        Page<History> historiesFromPage = historyRepository.findAll(PageRequest.of(pageNumber, pageSize));
         final List<History> histories = historiesFromPage.getContent();
 
         return HistoriesResponse.builder()

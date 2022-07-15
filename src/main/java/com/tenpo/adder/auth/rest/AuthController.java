@@ -1,8 +1,8 @@
 package com.tenpo.adder.auth.rest;
 
 import com.tenpo.adder.auth.rest.dto.AuthResponse;
-import com.tenpo.adder.auth.rest.dto.LoginDTO;
-import com.tenpo.adder.auth.rest.dto.RegisterDTO;
+import com.tenpo.adder.auth.rest.dto.LoginRequest;
+import com.tenpo.adder.auth.rest.dto.RegisterRequest;
 import com.tenpo.adder.history.service.HistoryService;
 import com.tenpo.adder.user.model.User;
 import com.tenpo.adder.user.service.UserService;
@@ -36,11 +36,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> authenticateUser(@RequestBody LoginDTO loginDTO) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsernameOrEmail(), loginDTO.getPassword()));
+    public ResponseEntity<AuthResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
+        log.info("Logging user: {}", loginRequest.getUsernameOrEmail());
+
+        final UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(), loginRequest.getPassword());
+        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        log.info("Logging user: {}", loginDTO.getUsernameOrEmail());
         final AuthResponse authResponse = new AuthResponse(USER_LOGGED_IN);
 
         this.historyService.createHistory(LOGIN_USER_URI,  authResponse.toString());
@@ -59,17 +61,17 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody RegisterDTO registerDTO){
+    public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest){
 
-        if(userService.isValidUsername(registerDTO.getUsername())) {
+        if(userService.isNotAllowedUsername(registerRequest.getUsername())) {
             return this.saveHistory(USERNAME_ALREADY_REGISTERED);
         }
-        if(userService.isValidEmail(registerDTO.getEmail())) {
+        if(userService.isNotAllowedEmail(registerRequest.getEmail())) {
             return this.saveHistory(EMAIL_ALREADY_REGISTERED);
         }
-        log.info("Logging user with username: {} and email: {}", registerDTO.getUsername(), registerDTO.getEmail());
+        log.info("Logging user with username: {} and email: {}", registerRequest.getUsername(), registerRequest.getEmail());
 
-        User user = userService.registerUser(registerDTO);
+        User user = userService.registerUser(registerRequest);
         final AuthResponse authResponse = new AuthResponse(USER_REGISTERED,"/api/users/" + user.getId());
         this.historyService.createHistory(REGISTER_USER_URI, authResponse.toString());
 

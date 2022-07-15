@@ -1,6 +1,6 @@
 package com.tenpo.adder.user.service;
 
-import com.tenpo.adder.auth.rest.dto.RegisterDTO;
+import com.tenpo.adder.auth.rest.dto.RegisterRequest;
 import com.tenpo.adder.exception.ResourceNotFoundException;
 import com.tenpo.adder.user.model.Role;
 import com.tenpo.adder.user.model.User;
@@ -43,31 +43,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User registerUser(RegisterDTO registerDTO) {
-        return userRepository.save(mapUser(registerDTO));
+    public User registerUser(RegisterRequest registerRequest) {
+        return userRepository.save(mapUser(registerRequest));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Boolean isValidUsername(String username) {
+    public Boolean isNotAllowedUsername(String username) {
             return userRepository.existsByUsername(username);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Boolean isValidEmail(String email) {
+    public Boolean isNotAllowedEmail(String email) {
             return userRepository.existsByEmail(email);
     }
 
-    private User mapUser(RegisterDTO registerDTO) {
-        User user = new User();
-        user.setUsername(registerDTO.getUsername());
-        user.setEmail(registerDTO.getEmail());
-        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+    private User mapUser(RegisterRequest registerRequest) {
 
-        Role roles = roleRepository.findByName(ROLE_USER).get();
-        user.setRoles(Collections.singleton(roles));
-        return user;
+        return User.builder()
+                .username(registerRequest.getUsername())
+                .email(registerRequest.getEmail())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .roles(Collections.singleton(roleRepository.findByName(ROLE_USER).get()))
+                .build();
     }
 
 }
