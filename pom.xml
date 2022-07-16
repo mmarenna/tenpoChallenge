@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.tenpo</groupId>
-	<artifactId>adder</artifactId>
+	<artifactId>tenpoapp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>adder</name>
+	<name>tenpoApp</name>
 	<description>Tenpo challenge</description>
 	<properties>
 		<java.version>11</java.version>

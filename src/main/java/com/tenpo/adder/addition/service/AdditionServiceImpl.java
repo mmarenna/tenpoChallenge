@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 public class AdditionServiceImpl implements AdditionService{
 
     @Override
-    public Integer calculateAddition(Integer numberOne, Integer numberTwo) {
-        return Math.addExact(numberOne, numberTwo);
+    public Double calculateAddition(Double numberOne, Double numberTwo) {
+        return Double.sum(numberOne, numberTwo);
     }
 }

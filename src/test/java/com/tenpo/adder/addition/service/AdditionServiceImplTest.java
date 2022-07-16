@@ -16,7 +16,7 @@ class AdditionServiceImplTest {
 
     @Test
     void calculateAdditionTest() {
-        assertEquals(30, additionService.calculateAddition(10,20));
+        assertEquals(30, additionService.calculateAddition(10.0, 20.0));
     }
 
 }

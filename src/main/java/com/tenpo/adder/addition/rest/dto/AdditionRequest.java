@@ -12,9 +12,9 @@ public class AdditionRequest {
 
     @JsonProperty("input_a")
     @NotNull(message = "Should not be null")
-    private Integer inputA;
+    private Double inputA;
 
     @JsonProperty("input_b")
     @NotNull(message = "Should not be null")
-    private Integer inputB;
+    private Double inputB;
 }

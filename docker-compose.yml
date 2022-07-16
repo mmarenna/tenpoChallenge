@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  app:
+    image: 'tenpo-app'
+    build:
+      context: .
+    container_name: tenpoApp
+    depends_on:
+      - postgresDb
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresDb:5432/tenpoDb
+      - SPRING_DATASOURCE_USERNAME=tenpouser
+      - SPRING_DATASOURCE_PASSWORD=TeNpo!
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+    ports:
+      - "8080:8080"
+
+  postgresDb:
+    image: 'matimarenna/tenpo-postgre'
+    ports:
+      - "5432:5432"
+    restart: always
+    container_name: postgresDb
+    environment:
+      - POSTGRES_USER=tenpouser
+      - POSTGRES_PASSWORD=TeNpo!
+      - POSTGRES_DB=tenpoDb

@@ -11,6 +11,6 @@ import lombok.Data;
 public class AdditionResponse {
 
     @JsonProperty("addition_result")
-    private Integer result;
+    private Double result;
 
 }

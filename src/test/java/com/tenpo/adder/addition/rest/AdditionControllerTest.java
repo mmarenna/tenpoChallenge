@@ -46,32 +46,32 @@ class AdditionControllerTest {
     @WithMockUser(value = "testUser")
     void additionOkTest() throws Exception {
 
-        when(additionService.calculateAddition(10,20)).thenReturn(30);
+        when(additionService.calculateAddition(10.0, 20.0)).thenReturn(30.0);
 
         final AdditionRequest additionRequest = AdditionRequest.builder()
-                .inputA(10)
-                .inputB(20)
+                .inputA(10.0)
+                .inputB(20.0)
                 .build();
 
         mvc.perform(post("/api/addition")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(additionRequest)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.addition_result").value("30"))
+                    .andExpect(jsonPath("$.addition_result").value("30.0"))
                     .andReturn();
 
-        verify(additionService).calculateAddition(10, 20);
-        verify(historyService).createHistory(ADDITION_URI, "AdditionResponse(result=30)");
+        verify(additionService).calculateAddition(10.0, 20.0);
+        verify(historyService).createHistory(ADDITION_URI, "AdditionResponse(result=30.0)");
     }
 
     @Test
     void additionWithoutLoginTest() throws Exception {
 
-        when(additionService.calculateAddition(10,20)).thenReturn(30);
+        when(additionService.calculateAddition(10.0, 20.0)).thenReturn(30.0);
 
         final AdditionRequest additionRequest = AdditionRequest.builder()
-                .inputA(10)
-                .inputB(20)
+                .inputA(10.0)
+                .inputB(20.0)
                 .build();
 
         mvc.perform(post("/api/addition")
@@ -86,7 +86,7 @@ class AdditionControllerTest {
     @WithMockUser(value = "testUser")
     void additionBadRequestTest() throws Exception {
         final AdditionRequest additionRequest = AdditionRequest.builder()
-                .inputA(10)
+                .inputA(10.0)
                 .build();
 
         mvc.perform(post("/api/addition")
