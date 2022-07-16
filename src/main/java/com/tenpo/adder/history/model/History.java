@@ -1,5 +1,6 @@
 package com.tenpo.adder.history.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class History {
     private Long id;
     private Date date;
     private String uri;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String response;
 
     @PrePersist
