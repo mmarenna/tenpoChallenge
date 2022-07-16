@@ -1,7 +1,7 @@
 package com.tenpo.adder.exception;
 
 import com.tenpo.adder.exception.dto.DetailErrors;
-import com.tenpo.adder.history.service.HistoryService;
+import com.tenpo.adder.record.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,14 +23,14 @@ import java.util.Map;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired
-    private HistoryService historyService;
+    private RecordService recordService;
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<DetailErrors> handleResourceNotFoundException(ResourceNotFoundException exception, WebRequest webRequest){
         final String uri = webRequest.getDescription(false);
         DetailErrors detailErrors = new DetailErrors(new Date(),exception.getMessage(), uri);
 
-        this.historyService.createHistory(uri);
+        this.recordService.createRecord(uri);
         return new ResponseEntity<>(detailErrors, HttpStatus.NOT_FOUND);
     }
 
@@ -39,7 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         final String uri = webRequest.getDescription(false);
         DetailErrors detailErrors = new DetailErrors(new Date(),exception.getMessage(), uri);
 
-        this.historyService.createHistory(uri);
+        this.recordService.createRecord(uri);
         return new ResponseEntity<>(detailErrors, HttpStatus.UNAUTHORIZED);
     }
 
@@ -48,7 +48,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         final String uri = webRequest.getDescription(false);
         DetailErrors detailErrors = new DetailErrors(new Date(),exception.getMessage(), uri);
 
-        this.historyService.createHistory(uri);
+        this.recordService.createRecord(uri);
         return new ResponseEntity<>(detailErrors, HttpStatus.FORBIDDEN);
     }
 
@@ -57,14 +57,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         final String uri = webRequest.getDescription(false);
         DetailErrors detailErrors = new DetailErrors(new Date(),exception.getMessage(), uri);
 
-        this.historyService.createHistory(uri);
+        this.recordService.createRecord(uri);
         return new ResponseEntity<>(detailErrors, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
-        this.historyService.createHistory(request.getDescription(false));
+        this.recordService.createRecord(request.getDescription(false));
 
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {

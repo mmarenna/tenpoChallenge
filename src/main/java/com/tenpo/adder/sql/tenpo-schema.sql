@@ -1,9 +1,9 @@
-CREATE TABLE public.histories (
+CREATE TABLE public.records (
 	id bigserial NOT NULL,
 	"date" timestamp NULL,
 	response varchar(255) NULL,
 	uri varchar(255) NULL,
-	CONSTRAINT histories_pkey PRIMARY KEY (id)
+	CONSTRAINT records_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE public.roles (

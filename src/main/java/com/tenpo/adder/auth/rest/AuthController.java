@@ -3,7 +3,7 @@ package com.tenpo.adder.auth.rest;
 import com.tenpo.adder.auth.rest.dto.AuthResponse;
 import com.tenpo.adder.auth.rest.dto.LoginRequest;
 import com.tenpo.adder.auth.rest.dto.RegisterRequest;
-import com.tenpo.adder.history.service.HistoryService;
+import com.tenpo.adder.record.service.RecordService;
 import com.tenpo.adder.user.model.User;
 import com.tenpo.adder.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,12 +26,12 @@ import static com.tenpo.adder.utils.ApiTenpoConstants.*;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final HistoryService historyService;
+    private final RecordService recordService;
     private final UserService userService;
 
-    public AuthController(AuthenticationManager authenticationManager, HistoryService historyService, UserService userService) {
+    public AuthController(AuthenticationManager authenticationManager, RecordService recordService, UserService userService) {
         this.authenticationManager = authenticationManager;
-        this.historyService = historyService;
+        this.recordService = recordService;
         this.userService = userService;
     }
 
@@ -45,7 +45,7 @@ public class AuthController {
 
         final AuthResponse authResponse = new AuthResponse(USER_LOGGED_IN);
 
-        this.historyService.createHistory(LOGIN_USER_URI,  authResponse.toString());
+        this.recordService.createRecord(LOGIN_USER_URI,  authResponse.toString());
         return ResponseEntity.status(HttpStatus.OK).body(authResponse);
     }
 
@@ -55,7 +55,7 @@ public class AuthController {
         log.info("Logging out user");
         SecurityContextHolder.getContext().setAuthentication(null);
         final AuthResponse authResponse = new AuthResponse(USER_LOGGED_OFF);
-        this.historyService.createHistory(LOGOUT_USER_URI, authResponse.toString());
+        this.recordService.createRecord(LOGOUT_USER_URI, authResponse.toString());
 
         return ResponseEntity.status(HttpStatus.OK).body(authResponse);
     }
@@ -64,22 +64,22 @@ public class AuthController {
     public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest){
 
         if(userService.isNotAllowedUsername(registerRequest.getUsername())) {
-            return this.saveHistory(USERNAME_ALREADY_REGISTERED);
+            return this.saveRecord(USERNAME_ALREADY_REGISTERED);
         }
         if(userService.isNotAllowedEmail(registerRequest.getEmail())) {
-            return this.saveHistory(EMAIL_ALREADY_REGISTERED);
+            return this.saveRecord(EMAIL_ALREADY_REGISTERED);
         }
         log.info("Logging user with username: {} and email: {}", registerRequest.getUsername(), registerRequest.getEmail());
 
         User user = userService.registerUser(registerRequest);
         final AuthResponse authResponse = new AuthResponse(USER_REGISTERED,"/api/users/" + user.getId());
-        this.historyService.createHistory(REGISTER_USER_URI, authResponse.toString());
+        this.recordService.createRecord(REGISTER_USER_URI, authResponse.toString());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(authResponse);
     }
 
-    private ResponseEntity<AuthResponse> saveHistory(String message){
-        this.historyService.createHistory(REGISTER_USER_URI);
+    private ResponseEntity<AuthResponse> saveRecord(String message){
+        this.recordService.createRecord(REGISTER_USER_URI);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AuthResponse(message));
     }
 

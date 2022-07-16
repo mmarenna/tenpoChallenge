@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tenpo.adder.addition.rest.dto.AdditionRequest;
 import com.tenpo.adder.addition.service.AdditionService;
 import com.tenpo.adder.auth.security.CustomUserDetailService;
-import com.tenpo.adder.history.service.HistoryService;
+import com.tenpo.adder.record.service.RecordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ class AdditionControllerTest {
     @MockBean
     private AdditionService additionService;
     @MockBean
-    private HistoryService historyService;
+    private RecordService recordService;
 
     ObjectMapper objectMapper;
 
@@ -61,7 +61,7 @@ class AdditionControllerTest {
                     .andReturn();
 
         verify(additionService).calculateAddition(10.0, 20.0);
-        verify(historyService).createHistory(ADDITION_URI, "AdditionResponse(result=30.0)");
+        verify(recordService).createRecord(ADDITION_URI, "AdditionResponse(result=30.0)");
     }
 
     @Test

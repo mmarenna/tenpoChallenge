@@ -5,7 +5,7 @@ import com.tenpo.adder.auth.rest.dto.AuthResponse;
 import com.tenpo.adder.auth.rest.dto.LoginRequest;
 import com.tenpo.adder.auth.rest.dto.RegisterRequest;
 import com.tenpo.adder.auth.security.CustomUserDetailService;
-import com.tenpo.adder.history.service.HistoryService;
+import com.tenpo.adder.record.service.RecordService;
 import com.tenpo.adder.user.model.User;
 import com.tenpo.adder.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +36,7 @@ class AuthControllerTest {
     ObjectMapper objectMapper;
 
     @MockBean
-    private HistoryService historyService;
+    private RecordService recordService;
     @MockBean
     private AuthenticationManager authenticationManager;
     @MockBean
@@ -64,7 +64,7 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.message").value("User logged in"))
                 .andReturn();
 
-        verify(historyService).createHistory(LOGIN_USER_URI, authResponse.toString());
+        verify(recordService).createRecord(LOGIN_USER_URI, authResponse.toString());
     }
 
     @Test
@@ -99,7 +99,7 @@ class AuthControllerTest {
 
         verify(userService).isNotAllowedUsername(registerRequest.getUsername());
         verify(userService).isNotAllowedEmail(registerRequest.getEmail());
-        verify(historyService).createHistory(REGISTER_USER_URI, authResponse.toString());
+        verify(recordService).createRecord(REGISTER_USER_URI, authResponse.toString());
     }
 
     @Test
@@ -160,7 +160,7 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.message").value("User logged off"))
                 .andReturn();
 
-        verify(historyService).createHistory(LOGOUT_USER_URI, authResponse.toString());
+        verify(recordService).createRecord(LOGOUT_USER_URI, authResponse.toString());
     }
 
 }

@@ -3,7 +3,7 @@ package com.tenpo.adder.addition.rest;
 import com.tenpo.adder.addition.rest.dto.AdditionRequest;
 import com.tenpo.adder.addition.rest.dto.AdditionResponse;
 import com.tenpo.adder.addition.service.AdditionService;
-import com.tenpo.adder.history.service.HistoryService;
+import com.tenpo.adder.record.service.RecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +23,11 @@ import static com.tenpo.adder.utils.ApiTenpoConstants.ADDITION_URI;
 public class AdditionController {
 
     private final AdditionService additionService;
-    private final HistoryService historyService;
+    private final RecordService recordService;
 
-    public AdditionController(AdditionService additionService, HistoryService historyService) {
+    public AdditionController(AdditionService additionService, RecordService recordService) {
         this.additionService = additionService;
-        this.historyService = historyService;
+        this.recordService = recordService;
     }
 
     @PreAuthorize("hasRole('USER')")
@@ -38,7 +38,7 @@ public class AdditionController {
         final AdditionResponse additionResponse = AdditionResponse.builder()
                 .result(this.additionService.calculateAddition(additionRequest.getInputA(), additionRequest.getInputB())).build();
 
-        this.historyService.createHistory(ADDITION_URI, additionResponse.toString());
+        this.recordService.createRecord(ADDITION_URI, additionResponse.toString());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(additionResponse);
     }

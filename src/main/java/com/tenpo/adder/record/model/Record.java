@@ -1,4 +1,4 @@
-package com.tenpo.adder.history.model;
+package com.tenpo.adder.record.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -14,8 +14,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name ="histories")
-public class History {
+@Table(name ="records")
+public class Record {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

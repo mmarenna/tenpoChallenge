@@ -1,6 +1,6 @@
-package com.tenpo.adder.history.rest.dto;
+package com.tenpo.adder.record.rest.dto;
 
-import com.tenpo.adder.history.model.History;
+import com.tenpo.adder.record.model.Record;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,11 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
-public class HistoriesResponse {
+public class RecordsResponse {
 
-    private List<History> histories;
+    private List<Record> records;
     private int pageNumber;
     private int pageSize;
-    private long numberOfHistories;
+    private long numberOfRecords;
     private int totalPages;
 }
